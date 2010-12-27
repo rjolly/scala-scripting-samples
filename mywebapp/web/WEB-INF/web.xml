@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+    <description>My Web App</description>
+    <display-name>My Web App</display-name>
+    <servlet>
+        <servlet-name>webdav</servlet-name>
+        <servlet-class>org.apache.catalina.servlets.WebdavServlet</servlet-class>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>0</param-value>
+        </init-param>
+        <init-param>
+            <param-name>listings</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>readonly</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>ScalaServlet</servlet-name>
+        <servlet-class>scalaservlet.ScalaServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>webdav</servlet-name>
+        <url-pattern>/webdav/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ScalaServlet</servlet-name>
+        <url-pattern>*.scala</url-pattern>
+    </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>index.scala</welcome-file>
+    </welcome-file-list>
+</web-app>
