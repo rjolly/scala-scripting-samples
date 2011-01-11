@@ -1,0 +1,135 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.0
+Created-By: 4.3.1 20080420 (prerelease) (Free Software Foundation, Inc
+ .)
+
+Name: javax/servlet/
+Specification-Title: Java API for Servlets
+Specification-Version: 2.4
+Specification-Vendor: Sun Microsystems, Inc.
+Implementation-Title: javax.servlet
+Implementation-Version: 2.4.public_draft
+Implementation-Vendor: Apache Software Foundation
+
+Name: javax/servlet/ServletRequestWrapper.class
+
+Name: javax/servlet/resources/web-app_2_3.dtd
+
+Name: javax/servlet/resources/j2ee_web_services_client_1_1.xsd
+
+Name: javax/servlet/ServletContextAttributeListener.class
+
+Name: javax/servlet/http/HttpServlet.class
+
+Name: javax/servlet/http/HttpSessionAttributeListener.class
+
+Name: javax/servlet/resources/web-jsptaglibrary_2_0.xsd
+
+Name: javax/servlet/http/HttpServletRequest.class
+
+Name: javax/servlet/ServletResponse.class
+
+Name: javax/servlet/ServletException.class
+
+Name: javax/servlet/ServletRequestListener.class
+
+Name: javax/servlet/ServletContextEvent.class
+
+Name: javax/servlet/ServletInputStream.class
+
+Name: javax/servlet/http/HttpSession.class
+
+Name: javax/servlet/GenericServlet.class
+
+Name: javax/servlet/resources/datatypes.dtd
+
+Name: javax/servlet/http/HttpServletResponseWrapper.class
+
+Name: javax/servlet/RequestDispatcher.class
+
+Name: javax/servlet/resources/xml.xsd
+
+Name: javax/servlet/resources/j2ee_web_services_1_1.xsd
+
+Name: javax/servlet/ServletRequest.class
+
+Name: javax/servlet/resources/XMLSchema.dtd
+
+Name: javax/servlet/http/HttpSessionBindingEvent.class
+
+Name: javax/servlet/LocalStrings.properties
+
+Name: javax/servlet/resources/j2ee_1_4.xsd
+
+Name: javax/servlet/FilterChain.class
+
+Name: javax/servlet/SingleThreadModel.class
+
+Name: javax/servlet/http/HttpServletResponse.class
+
+Name: javax/servlet/http/HttpUtils.class
+
+Name: javax/servlet/ServletContextAttributeEvent.class
+
+Name: javax/servlet/http/LocalStrings_fr.properties
+
+Name: javax/servlet/LocalStrings_fr.properties
+
+Name: javax/servlet/ServletContext.class
+
+Name: javax/servlet/resources/web-app_2_2.dtd
+
+Name: javax/servlet/http/HttpSessionBindingListener.class
+
+Name: javax/servlet/Servlet.class
+
+Name: javax/servlet/http/NoBodyResponse.class
+
+Name: javax/servlet/http/LocalStrings_es.properties
+
+Name: javax/servlet/Filter.class
+
+Name: javax/servlet/FilterConfig.class
+
+Name: javax/servlet/http/Cookie.class
+
+Name: javax/servlet/ServletConfig.class
+
+Name: javax/servlet/resources/jsp_2_0.xsd
+
+Name: javax/servlet/resources/jspxml.xsd
+
+Name: javax/servlet/resources/web-app_2_4.xsd
+
+Name: javax/servlet/LocalStrings_ja.properties
+
+Name: javax/servlet/http/HttpServletRequestWrapper.class
+
+Name: javax/servlet/http/HttpSessionListener.class
+
+Name: javax/servlet/http/HttpSessionActivationListener.class
+
+Name: javax/servlet/http/HttpSessionContext.class
+
+Name: javax/servlet/ServletRequestEvent.class
+
+Name: javax/servlet/http/LocalStrings_ja.properties
+
+Name: javax/servlet/ServletOutputStream.class
+
+Name: javax/servlet/ServletContextListener.class
+
+Name: javax/servlet/http/LocalStrings.properties
+
+Name: javax/servlet/http/HttpSessionEvent.class
+
+Name: javax/servlet/ServletRequestAttributeEvent.class
+
+Name: javax/servlet/UnavailableException.class
+
+Name: javax/servlet/ServletResponseWrapper.class
+
+Name: javax/servlet/http/NoBodyOutputStream.class
+
+Name: javax/servlet/ServletRequestAttributeListener.class
+

@@ -74,5 +74,8 @@
         <jar compress="${jar.compress}" jarfile="${dist.jar}">
             <fileset dir="${build.classes.dir}"/>
         </jar>
+        <jar destfile="${dist.dir}/servlet-api.jar" manifest="manifest.mf">
+	    <zipfileset src="${servlet.api}"/>
+	</jar>
     </target>
 </project>
