@@ -12,7 +12,11 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ServiceLoader;
+import javax.script.Compilable;
+import javax.script.CompiledScript;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptException;
@@ -28,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ScalaServlet extends HttpServlet {
 	static ScriptEngine engine = getEngineFactory("Scala Interpreter").getScriptEngine();
+	static Map cache = new HashMap();
 	/**
 	 * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
 	 * @param request servlet request
@@ -50,7 +55,10 @@ public class ScalaServlet extends HttpServlet {
 			pipe(r, w);
 			w.close();
 			r.close();
-			r = new StringReader(engine.eval("{" + w + "}").toString());
+			String str = "{" + w + "}";
+			if(!cache.containsKey(str)) cache.put(str, ((Compilable)engine).compile(str));
+			CompiledScript cs = (CompiledScript)cache.get(str);
+			r = new StringReader(cs.eval().toString());
 			pipe(r, resp.getWriter());
 			r.close();
 		} catch (ScriptException e) {
@@ -58,7 +66,7 @@ public class ScalaServlet extends HttpServlet {
 		}
 	}
 
-	void pipe(Reader in, Writer out) throws IOException {
+	static void pipe(Reader in, Writer out) throws IOException {
 		while (true) {
 			int c = in.read();
 			if (c == -1) {
