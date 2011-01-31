@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author raphael
  */
 public class ScalaServlet extends HttpServlet {
-	static ScriptEngine engine = getEngineFactory("Scala Interpreter").getScriptEngine();
-	static Map cache = new HashMap();
+	static final ScriptEngine engine = getEngineFactory("Scala Interpreter").getScriptEngine();
+	static final Map cache = new HashMap();
 	/**
 	 * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
 	 * @param request servlet request
@@ -42,27 +42,29 @@ public class ScalaServlet extends HttpServlet {
 	 */
 	protected void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		ServletContext context = getServletContext();
-		engine.put("request", req);
-		engine.put("response", resp);
-		String uri = req.getRequestURI().substring(req.getContextPath().length());
-		InputStream in = context.getResourceAsStream(uri);
-		if (in == null) {
-			resp.sendError(HttpURLConnection.HTTP_NOT_FOUND, uri);
-		} else try {
-			resp.setContentType("text/html; charset=utf-8");
-			Reader r = new InputStreamReader(in);
-			Writer w = new StringWriter();
-			pipe(r, w);
-			w.close();
-			r.close();
-			String str = "{" + w + "}";
-			if(!cache.containsKey(str)) cache.put(str, ((Compilable)engine).compile(str));
-			CompiledScript cs = (CompiledScript)cache.get(str);
-			r = new StringReader(cs.eval().toString());
-			pipe(r, resp.getWriter());
-			r.close();
-		} catch (ScriptException e) {
-			throw new ServletException(e);
+		synchronized(engine) {
+			engine.put("request", req);
+			engine.put("response", resp);
+			String uri = req.getRequestURI().substring(req.getContextPath().length());
+			InputStream in = context.getResourceAsStream(uri);
+			if (in == null) {
+				resp.sendError(HttpURLConnection.HTTP_NOT_FOUND, uri);
+			} else try {
+				resp.setContentType("text/html; charset=utf-8");
+				Reader r = new InputStreamReader(in);
+				Writer w = new StringWriter();
+				pipe(r, w);
+				w.close();
+				r.close();
+				String str = "{" + w + "}";
+				if(!cache.containsKey(str)) cache.put(str, ((Compilable)engine).compile(str));
+				CompiledScript cs = (CompiledScript)cache.get(str);
+				r = new StringReader(cs.eval().toString());
+				pipe(r, resp.getWriter());
+				r.close();
+			} catch (ScriptException e) {
+				throw new ServletException(e);
+			}
 		}
 	}
 
