@@ -1,7 +1,7 @@
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import scala.util.Random
 
-val req = request.asInstanceOf[HttpServletRequest]
+val req = bindings.get("request").asInstanceOf[HttpServletRequest]
 val ses = req.getSession
 val ctx = ses.getServletContext
 
