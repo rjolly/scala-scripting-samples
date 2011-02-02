@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author raphael
  */
 public class ScalaServlet extends HttpServlet {
-	static final ScriptEngine engine = getEngineFactory("Scala Interpreter").getScriptEngine();
+	static final ScriptEngine engine = getScriptEngine();
 	static final Map cache = new HashMap();
 	/**
 	 * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -76,6 +76,11 @@ public class ScalaServlet extends HttpServlet {
 			}
 			out.write(c);
 		}
+	}
+
+	public static ScriptEngine getScriptEngine() {
+		ScriptEngine engine = getEngineFactory("Scala Interpreter").getScriptEngine();
+		return engine;
 	}
 
 	public static ScriptEngineFactory getEngineFactory(String name) {
