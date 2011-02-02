@@ -4,8 +4,8 @@ import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
   <head>
   </head>
   <body>
-  {request.asInstanceOf[HttpServletRequest]}
+  {bindings.get("request").asInstanceOf[HttpServletRequest]}
   <br/>
-  {response.asInstanceOf[HttpServletResponse]}
+  {bindings.get("response").asInstanceOf[HttpServletResponse]}
   </body>
 </html>
