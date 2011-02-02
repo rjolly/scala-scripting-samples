@@ -12,7 +12,11 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ServiceLoader;
+import javax.script.Compilable;
+import javax.script.CompiledScript;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptException;
@@ -38,33 +42,38 @@ public class ScalaServlet extends HttpServlet {
 	protected void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		ServletContext context = getServletContext();
 		if (context.getAttribute("interpreter") == null) {
-			context.setAttribute("interpreter", getEngineFactory("Scala Interpreter").getScriptEngine());
-			String documentRoot = System.getProperty("catalina.base") + "/webapps/mywebapp";
-			((scala.tools.nsc.Interpreter)context.getAttribute("interpreter")).settings().classpath().value_$eq(documentRoot + "/rt.jar" + ":" + documentRoot + "/servlet-api-2.4.jar");
+			context.setAttribute("interpreter", getScriptEngine());
+			context.setAttribute("cache", new HashMap());
 		}
 		ScriptEngine engine = (ScriptEngine)context.getAttribute("interpreter");
-		engine.put("request", req);
-		engine.put("response", resp);
-		String uri = req.getRequestURI().substring(req.getContextPath().length());
-		InputStream in = context.getResourceAsStream(uri);
-		if (in == null) {
-			resp.sendError(HttpURLConnection.HTTP_NOT_FOUND, uri);
-		} else try {
-			resp.setContentType("text/html; charset=utf-8");
-			Reader r = new InputStreamReader(in);
-			Writer w = new StringWriter();
-			pipe(r, w);
-			w.close();
-			r.close();
-			r = new StringReader(engine.eval("{" + w + "}").toString());
-			pipe(r, resp.getWriter());
-			r.close();
-		} catch (ScriptException e) {
-			throw new ServletException(e);
+		Map cache = (Map)context.getAttribute("cache");
+		synchronized(engine) {
+			engine.put("request", req);
+			engine.put("response", resp);
+			String uri = req.getRequestURI().substring(req.getContextPath().length());
+			InputStream in = context.getResourceAsStream(uri);
+			if (in == null) {
+				resp.sendError(HttpURLConnection.HTTP_NOT_FOUND, uri);
+			} else try {
+				resp.setContentType("text/html; charset=utf-8");
+				Reader r = new InputStreamReader(in);
+				Writer w = new StringWriter();
+				pipe(r, w);
+				w.close();
+				r.close();
+				String str = "{" + w + "}";
+				if(!cache.containsKey(str)) cache.put(str, ((Compilable)engine).compile(str));
+				CompiledScript cs = (CompiledScript)cache.get(str);
+				r = new StringReader(cs.eval().toString());
+				pipe(r, resp.getWriter());
+				r.close();
+			} catch (ScriptException e) {
+				throw new ServletException(e);
+			}
 		}
 	}
 
-	void pipe(Reader in, Writer out) throws IOException {
+	static void pipe(Reader in, Writer out) throws IOException {
 		while (true) {
 			int c = in.read();
 			if (c == -1) {
@@ -72,6 +81,13 @@ public class ScalaServlet extends HttpServlet {
 			}
 			out.write(c);
 		}
+	}
+
+	public static ScriptEngine getScriptEngine() {
+		ScriptEngine engine = getEngineFactory("Scala Interpreter").getScriptEngine();
+		String documentRoot = System.getProperty("catalina.base") + "/webapps/mywebapp";
+		((scala.tools.nsc.settings.ScalaSettings)((scala.tools.nsc.Interpreter)engine).settings()).classpath().value_$eq(documentRoot + "/rt.jar" + ":" + documentRoot + "/servlet-api-2.4.jar");
+		return engine;
 	}
 
 	public static ScriptEngineFactory getEngineFactory(String name) {
