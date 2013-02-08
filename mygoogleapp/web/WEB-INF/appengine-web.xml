@@ -6,4 +6,5 @@
         <exclude path="/**.scala"/>
     </static-files>
     <sessions-enabled>true</sessions-enabled>
+    <threadsafe>false</threadsafe>
 </appengine-web-app>

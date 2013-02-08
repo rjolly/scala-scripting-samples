@@ -14,11 +14,10 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ServiceLoader;
 import javax.script.Compilable;
 import javax.script.CompiledScript;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -31,32 +30,37 @@ import javax.servlet.http.HttpServletResponse;
  * @author raphael
  */
 public class ScalaServlet extends HttpServlet {
-	static final ScriptEngine engine = getScriptEngine();
 	static final Map cache = new HashMap();
+	static final Map bindings = new HashMap();
+	static final ScriptEngineManager manager = new ScriptEngineManager();
+	static final ScriptEngine engine = manager.getEngineByName("scala");
+	static {
+		engine.put("bindings: java.util.Map[String, Object]", bindings);
+	}
 	/**
 	 * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-	 * @param request servlet request
-	 * @param response servlet response
+	 * @param req servlet request
+	 * @param resp servlet response
 	 * @throws ServletException if a servlet-specific error occurs
 	 * @throws IOException if an I/O error occurs
 	 */
 	protected void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		ServletContext context = getServletContext();
-		synchronized(engine) {
-			engine.put("request", req);
-			engine.put("response", resp);
-			String uri = req.getRequestURI().substring(req.getContextPath().length());
-			InputStream in = context.getResourceAsStream(uri);
-			if (in == null) {
-				resp.sendError(HttpURLConnection.HTTP_NOT_FOUND, uri);
-			} else try {
+		bindings.put("request", req);
+		bindings.put("response", resp);
+		String uri = req.getRequestURI().substring(req.getContextPath().length());
+		InputStream in = context.getResourceAsStream(uri);
+		if (in == null) {
+			resp.sendError(HttpURLConnection.HTTP_NOT_FOUND, uri);
+		} else {
+			try {
 				resp.setContentType("text/html; charset=utf-8");
 				Reader r = new InputStreamReader(in);
 				Writer w = new StringWriter();
 				pipe(r, w);
 				w.close();
 				r.close();
-				String str = "{" + w + "}";
+				String str = "new { def apply = {" + w + "} ; override def toString = apply.toString }";
 				if(!cache.containsKey(str)) cache.put(str, ((Compilable)engine).compile(str));
 				CompiledScript cs = (CompiledScript)cache.get(str);
 				r = new StringReader(cs.eval().toString());
@@ -76,19 +80,6 @@ public class ScalaServlet extends HttpServlet {
 			}
 			out.write(c);
 		}
-	}
-
-	public static ScriptEngine getScriptEngine() {
-		ScriptEngine engine = getEngineFactory("Scala Interpreter").getScriptEngine();
-		return engine;
-	}
-
-	public static ScriptEngineFactory getEngineFactory(String name) {
-		ServiceLoader<ScriptEngineFactory> sefLoader = ServiceLoader.load(ScriptEngineFactory.class);
-		for (ScriptEngineFactory sef : sefLoader) {
-			if(name.equals(sef.getEngineName())) return sef;
-		}
-		return null;
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
